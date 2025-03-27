@@ -10,7 +10,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Match representa la estructura de un partido
 type Match struct {
 	ID              int    `json:"id"`
 	EquipoLocal     string `json:"equipoLocal"`
@@ -22,16 +21,13 @@ type Match struct {
 	ExtraTime       bool   `json:"extraTime,omitempty"`
 }
 
-// matches simula una base de datos en memoria
 var matches []Match
 
-// getAllMatches maneja GET /api/matches
 func getAllMatches(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(matches)
 }
 
-// getMatchByID maneja GET /api/matches/{id}
 func getMatchByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -49,7 +45,6 @@ func getMatchByID(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Partido no encontrado", http.StatusNotFound)
 }
 
-// createMatch maneja POST /api/matches
 func createMatch(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var newMatch Match
@@ -57,13 +52,12 @@ func createMatch(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Datos inválidos", http.StatusBadRequest)
 		return
 	}
-	// Generamos un ID aleatorio (en una BD real, se auto-incrementaría)
+
 	newMatch.ID = rand.Intn(1000000)
 	matches = append(matches, newMatch)
 	json.NewEncoder(w).Encode(newMatch)
 }
 
-// updateMatch maneja PUT /api/matches/{id}
 func updateMatch(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -82,7 +76,7 @@ func updateMatch(w http.ResponseWriter, r *http.Request) {
 			match.EquipoLocal = updatedData.EquipoLocal
 			match.EquipoVisitante = updatedData.EquipoVisitante
 			match.Fecha = updatedData.Fecha
-			// Opcional: actualiza estadísticas si vienen en el JSON
+
 			if updatedData.Goals != 0 {
 				match.Goals = updatedData.Goals
 			}
@@ -102,7 +96,6 @@ func updateMatch(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Partido no encontrado", http.StatusNotFound)
 }
 
-// deleteMatch maneja DELETE /api/matches/{id}
 func deleteMatch(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -121,7 +114,6 @@ func deleteMatch(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Partido no encontrado", http.StatusNotFound)
 }
 
-// PATCH: Registrar Gol
 func patchRegisterGoal(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -140,7 +132,6 @@ func patchRegisterGoal(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Partido no encontrado", http.StatusNotFound)
 }
 
-// PATCH: Registrar Tarjeta Amarilla
 func patchRegisterYellowCard(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -159,7 +150,6 @@ func patchRegisterYellowCard(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Partido no encontrado", http.StatusNotFound)
 }
 
-// PATCH: Registrar Tarjeta Roja
 func patchRegisterRedCard(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -178,7 +168,6 @@ func patchRegisterRedCard(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Partido no encontrado", http.StatusNotFound)
 }
 
-// PATCH: Establecer Tiempo Extra
 func patchSetExtraTime(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -197,7 +186,6 @@ func patchSetExtraTime(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Partido no encontrado", http.StatusNotFound)
 }
 
-// enableCORS habilita CORS para evitar "Failed to fetch" por restricciones de navegador
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -213,7 +201,7 @@ func enableCORS(next http.Handler) http.Handler {
 }
 
 func main() {
-	// Datos de ejemplo
+
 	matches = append(matches, Match{
 		ID:              1,
 		EquipoLocal:     "Real Madrid",
@@ -230,14 +218,12 @@ func main() {
 	router := mux.NewRouter()
 	router.Use(enableCORS)
 
-	// Rutas principales
 	router.HandleFunc("/api/matches", getAllMatches).Methods("GET")
 	router.HandleFunc("/api/matches/{id}", getMatchByID).Methods("GET")
 	router.HandleFunc("/api/matches", createMatch).Methods("POST")
 	router.HandleFunc("/api/matches/{id}", updateMatch).Methods("PUT")
 	router.HandleFunc("/api/matches/{id}", deleteMatch).Methods("DELETE")
 
-	// Rutas PATCH
 	router.HandleFunc("/api/matches/{id}/goal", patchRegisterGoal).Methods("PATCH")
 	router.HandleFunc("/api/matches/{id}/yellowcard", patchRegisterYellowCard).Methods("PATCH")
 	router.HandleFunc("/api/matches/{id}/redcard", patchRegisterRedCard).Methods("PATCH")
