@@ -1,0 +1,36 @@
+LLMS: Uso de la API LaLigaTracker
+
+1) GET /api/matches
+   Obtiene la lista de todos los partidos.
+
+2) GET /api/matches/{id}
+   Obtiene un partido por su ID.
+
+3) POST /api/matches
+   Crea un partido nuevo.
+   Ejemplo de JSON:
+   {
+     "equipoLocal": "Valencia",
+     "equipoVisitante": "Real Sociedad",
+     "fecha": "04/01/2025"
+   }
+
+4) PUT /api/matches/{id}
+   Actualiza los datos de un partido (equipos, fecha, estadísticas).
+
+5) DELETE /api/matches/{id}
+   Elimina un partido por ID.
+
+6) PATCH /api/matches/{id}/goal
+   Incrementa en 1 la propiedad 'Goals' (goles).
+
+7) PATCH /api/matches/{id}/yellowcard
+   Incrementa en 1 la propiedad 'YellowCards' (tarjetas amarillas).
+
+8) PATCH /api/matches/{id}/redcard
+   Incrementa en 1 la propiedad 'RedCards' (tarjetas rojas).
+
+9) PATCH /api/matches/{id}/extratime
+   Establece 'ExtraTime' a true, indicando tiempo extra.
+
+Para cada endpoint, se emplean los métodos HTTP correspondientes (GET, POST, PUT, DELETE, PATCH).
